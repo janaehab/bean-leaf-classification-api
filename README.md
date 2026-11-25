@@ -1,10 +1,37 @@
-# Bean Leaf Classification API
+# 🌿 LeafLens AI — Bean Leaf Classification
 
-**CPU-optimized image classification with PyTorch, ONNX Runtime, FastAPI, and Docker.**
+**An interactive, cloud-hosted computer-vision application built with PyTorch, MobileNetV3-Small, ONNX Runtime, FastAPI, Docker, and GitHub Actions.**
 
-An end-to-end ML engineering project that trains a three-class bean-leaf classifier, compares transfer-learning strategies, validates model conversion, and serves predictions through a tested HTTP API. The selected model uses **MobileNetV3-Small** and is packaged for CPU inference with **ONNX Runtime**.
+[**🌱 Try the live web app**](https://bean-leaf-classification-api.onrender.com/) · [**API documentation**](https://bean-leaf-classification-api.onrender.com/docs) · [**Model information**](https://bean-leaf-classification-api.onrender.com/model-info)
 
-> **Scope:** This is a portfolio/demo classifier evaluated on the Makerere Beans dataset, **not** a validated plant-disease diagnostic product. Cloud hosting has not yet been completed. Reported performance is from local experiments.
+Upload a bean-leaf photograph to receive one of three classifications: **angular leaf spot**, **bean rust**, or **healthy**, along with model scores. LeafLens pairs a responsive upload interface with a tested inference API and a CPU-optimized ONNX model. Both the frontend and API are served by the **same Dockerized FastAPI application** on Render.
+
+> **Important:** This is an educational/portfolio classifier trained and evaluated on a small curated dataset, **not** a validated agricultural diagnostic system. Model scores are **uncalibrated softmax outputs**, not reliable disease probabilities. Results from local benchmarks should not be interpreted as cloud performance.
+
+## ✨ Web application
+
+- Upload **JPEG, PNG, or WebP** photographs through a responsive drag-and-drop interface, with an image preview.
+- View the predicted category and scores for all three classes, with visual progress bars.
+- Check readiness, inspect model information, or use the [interactive Swagger UI](https://bean-leaf-classification-api.onrender.com/docs) for direct API access.
+- Use the application on a phone or desktop; no installation or API client is required.
+
+### Interface preview
+
+The images below show the UI captured during local interface testing (not a cloud-performance benchmark).
+
+[![LeafLens AI desktop interface](docs/images/leaflens-desktop.png)](https://bean-leaf-classification-api.onrender.com/)
+
+<details>
+<summary><strong>View the mobile layout</strong></summary>
+
+<img src="docs/images/leaflens-mobile.png" width="300" alt="LeafLens AI responsive mobile interface screenshot" />
+
+</details>
+
+**Live app:** https://bean-leaf-classification-api.onrender.com/  
+**REST API:** https://bean-leaf-classification-api.onrender.com/docs
+
+The project is hosted on a **Render Free** web service. After inactivity, the first request may be noticeably slower because the service may need to start.
 
 ## Results at a glance
 
@@ -26,32 +53,44 @@ Recorded evidence: [`test_metrics_frozen_seed21.json`](results/test_metrics_froz
 ## Architecture
 
 ```text
-Makerere Beans dataset (train / validation / test)
-       │
-       ├── Augmentation + preprocessing
-       ▼
-MobileNetV3-Small (ImageNet pretrained)
-       │
-       ├── Frozen features vs. partial fine-tuning
-       ├── 3 random seeds per configuration
-       └── Checkpoint selection by validation macro-F1
-                    │
-                    ▼
-        Selected PyTorch checkpoint
-                    │
-             Export to ONNX
-                    │
-            ONNX model + weights
-                    │
-  Upload ──► FastAPI image validation ──► ONNX Runtime CPU inference
-                    │
-                    ▼
-       Class label + scores + model version
-                    │
-             Docker container
+                      OFFLINE MODEL DEVELOPMENT
+Makerere Beans dataset (1,034 train / 133 val / 128 test)
+                 │
+                 ▼
+    MobileNetV3-Small (ImageNet pretrained)
+                 │
+      Frozen features vs. partial fine-tuning
+      Three random seeds per configuration
+      Checkpoint selected by validation macro-F1
+                 │
+                 ▼
+     PyTorch checkpoint (not tracked in Git)
+                 │
+              ONNX export
+                 │
+                 ▼
+    ONNX graph + external weights + metadata
+                 │
+                 ▼
+                      CLOUD INFERENCE SERVICE
+Browser (HTML/CSS/JS) ── image upload ──► FastAPI /predict
+                                              │
+                                   File size/type validation
+                                              │
+                                   Pillow/NumPy preprocessing
+                                              │
+                                   ONNX Runtime CPU session
+                                              │
+                                              ▼
+                                 Class label + scores + version
+                                              │
+                             Browser result UI ◄── JSON response
+
+                  Docker image → Render web service
+                  GitHub Actions → CI checks/build
 ```
 
-The API also supports a **PyTorch** backend for equivalence and performance comparisons. ONNX serving uses NumPy/Pillow for preprocessing and does **not** require PyTorch in the ONNX Docker image.
+The API supports **PyTorch** and **ONNX Runtime** backends for controlled comparisons. The deployed ONNX-only Docker image uses NumPy and Pillow for preprocessing and does **not** install PyTorch. The web interface is static HTML/CSS/JavaScript served from FastAPI, so there is no second frontend hosting bill or cross-origin API configuration.
 
 ## Data and modeling
 
@@ -93,7 +132,7 @@ docker build -f Dockerfile.onnx -t bean-leaf-onnx:local .
 docker run --rm -p 8002:8000 bean-leaf-onnx:local
 ```
 
-Then open [`http://127.0.0.1:8002/docs`](http://127.0.0.1:8002/docs) or check readiness:
+Then open the **LeafLens web interface** at [`http://127.0.0.1:8002/`](http://127.0.0.1:8002/) or [Swagger API docs](http://127.0.0.1:8002/docs). To check readiness and send a prediction:
 
 ```bash
 curl http://127.0.0.1:8002/ready
@@ -107,6 +146,7 @@ A successful prediction includes `label`, `confidence`, `scores`, and `model_ver
 
 | Endpoint | Behavior |
 |---|---|
+| `GET /` | LeafLens AI interactive web interface |
 | `GET /health` | Liveness check |
 | `GET /ready` | Model readiness; returns `503` if unavailable |
 | `GET /model-info` | Loaded model version, classes, architecture and inference backend |
@@ -145,7 +185,7 @@ The `.pt` checkpoint is intentionally **not included in Git**. To serve or re-ex
 
 ## Verification and benchmarking
 
-- **API tests:** `python -m pytest -q` (8 tests passed locally at the time of initial verification).
+- **Automated tests:** `python -m pytest -q` covers API validation and the new frontend route/static assets. The original API suite passed eight tests; re-run the current suite and check GitHub Actions after the frontend changes.
 - **Backends:** Both APIs matched predicted labels on **133/133 validation images**, with a maximum probability difference of approximately **0.000003** through the HTTP path.
 - **Model-only latency:** Compared 150 inferences per backend, excluding image preprocessing and HTTP.
 - **HTTP latency:** Compared sequential requests using the same sample image.
@@ -169,24 +209,66 @@ Moving from concurrency **5 to 10** increased throughput by about **9.1%** but i
 
 **Benchmark limitations:** Results were measured on a Windows development machine using localhost and, for Docker, Docker Desktop's Linux VM. The exact CPU model, thread allocation across all runs, and system load were not standardized. The same 558 KB image was repeatedly uploaded. These are local performance observations—not service-level objectives, production reliability claims, or cloud performance guarantees.
 
-## CI and deployment status
+## Cloud deployment and CI
 
-GitHub Actions is configured to check Python syntax, install testing/ONNX dependencies, run API tests, and build/start the Docker image with a readiness check. **Confirm the workflow status in the repository's Actions tab**; a successful local run is not evidence that CI has passed.
+**Deployment:** Render Web Service using the `Dockerfile.onnx` image, deployed from the GitHub `main` branch. The service serves both the LeafLens homepage at `/` and its JSON prediction endpoint at `/predict`.
 
-The service has been built and run **locally in Docker**. It has **not yet been deployed to a public cloud environment**. Authentication, rate limiting, systematic security scanning, external monitoring, and more representative real-world testing would be required before public production use.
+**Verified hosted inference:** On **2026-11-25**, a public HTTPS request to the Render `/predict` endpoint returned the same prediction and scores as the locally tested container for `sample_leaf.png`:
+
+```json
+{
+  "label": "angular_leaf_spot",
+  "confidence": 0.812755,
+  "scores": {
+    "angular_leaf_spot": 0.812755,
+    "bean_rust": 0.17215,
+    "healthy": 0.015096
+  },
+  "model_version": "beans-mnv3-seed21"
+}
+```
+
+Test the **current** live service with:
+
+```powershell
+curl.exe https://bean-leaf-classification-api.onrender.com/ready
+curl.exe https://bean-leaf-classification-api.onrender.com/model-info
+curl.exe -X POST "https://bean-leaf-classification-api.onrender.com/predict" -F "file=@sample_leaf.png"
+```
+
+A successful deployed prediction verifies hosted inference; it does not establish uptime guarantees, security hardening, scalability, or production readiness.
+
+**Continuous integration:** GitHub Actions is configured to check Python syntax, install testing/ONNX dependencies, run tests, and build/start the ONNX Docker image with a readiness check. Check the [Actions tab](https://github.com/janaehab/bean-leaf-classification-api/actions) for the latest workflow result.
+
+### Optional: a small cloud latency check
+
+Run the existing benchmark script from your **own computer**, after checking that the Render Free instance is awake. Use a few requests rather than the 7,500-request local load-test workload:
+
+```powershell
+python concurrent_http_benchmark.py --url https://bean-leaf-classification-api.onrender.com --image sample_leaf.png --concurrency 1 --runs 10 --warmup 2 --timeout 120 --output results/cloud_latency_sample.json
+```
+
+This reports **client-observed end-to-end HTTP latency**, including network overhead, upload, preprocessing, inference, and response serialization. It is **not comparable directly** with the local model-only CPU speedup. Do not claim a measured cloud number until this experiment has actually been run.
+
+### Operational boundaries
+
+The application includes image type, size, and pixel-count checks, a non-root Docker user, health/readiness endpoints, and CI checks. It does **not** claim production-grade security, monitoring, authentication, rate limits, or guaranteed availability. Render Free can sleep when idle and has resource/usage limits. Upload only images you are comfortable sending to the hosted service.
 
 ## Repository guide
 
 ```text
 image_api/                  FastAPI service and PyTorch/ONNX predictors
+image_api/frontend/         Responsive LeafLens HTML/CSS/JS web interface
 scripts/                    Training, evaluation, export and comparison scripts
 tests/                      API and backend tests
 artifacts/                  Tracked ONNX graph, external weights and metadata
 results/                    Selected model evaluation and benchmark outputs
+docs/images/                Local desktop/mobile UI screenshots
+docs/onnx-deployment.md     Detailed serving and reproducibility guide
 Dockerfile.onnx             CPU-only ONNX serving image
 Dockerfile                  Original PyTorch serving image (requires local .pt checkpoint)
 concurrent_http_benchmark.py  Concurrent HTTP load testing
 .github/workflows/ci.yml    Continuous integration workflow
 ```
 
-**Technology:** Python · PyTorch / torchvision · ONNX Runtime · FastAPI · NumPy · Pillow · scikit-learn · Docker · pytest · GitHub Actions
+**Technology:** Python · PyTorch / torchvision · MobileNetV3 · ONNX Runtime · FastAPI · NumPy · Pillow · scikit-learn · HTML/CSS/JavaScript · Docker · pytest · GitHub Actions · Render

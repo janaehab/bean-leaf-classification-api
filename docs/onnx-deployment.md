@@ -4,7 +4,7 @@
 
 This guide describes the **implemented ONNX Runtime serving path** for the Bean Leaf Classification API. It is intended for engineers who want to run the container, reproduce the CPU-backend comparison, or understand the ONNX artifact layout. For modeling results, architecture, and limitations, see the [main README](../README.md).
 
-> **Status:** ONNX inference has been validated locally, including a Docker container. This repository does **not** claim public-cloud deployment or production readiness.
+> **Status:** ONNX inference has been validated locally and deployed to a [Render-hosted demo](https://bean-leaf-classification-api.onrender.com/). The public `/predict` endpoint was tested on 2026-11-25. This does **not** imply production readiness.
 
 ## 1. Model artifacts
 
@@ -31,7 +31,7 @@ docker run --rm -p 8002:8000 bean-leaf-onnx:local
 
 The container listens on port **8000** internally; port **8002** is the host port used here to avoid conflicts with local development servers. Leave this terminal running while testing the service.
 
-Open `http://127.0.0.1:8002/docs` for Swagger UI, or run in a **second** terminal from the repository root:
+Open `http://127.0.0.1:8002/` for the LeafLens web interface or `http://127.0.0.1:8002/docs` for Swagger UI. You can also run these commands in a **second** terminal from the repository root:
 
 ```powershell
 curl.exe http://127.0.0.1:8002/ready
@@ -149,9 +149,26 @@ This can overwrite local outputs. Back up artifacts before regenerating them. Ex
 | Docker build fails in clean CI | Confirm `artifacts/` contains the graph, `.onnx.data`, and metadata tracked in Git |
 | PyTorch comparison fails | Retrain / restore the local `.pt` checkpoint; it is intentionally untracked |
 
-## 8. Operational limitations
+## 8. Hosted demo (Render Free)
 
-- No public-cloud deployment is currently claimed.
+- **Web interface:** https://bean-leaf-classification-api.onrender.com/
+- **Swagger API:** https://bean-leaf-classification-api.onrender.com/docs
+- **Readiness:** https://bean-leaf-classification-api.onrender.com/ready
+- **Model metadata:** https://bean-leaf-classification-api.onrender.com/model-info
+
+The service is deployed from GitHub `main` using the ONNX-only Dockerfile. The Docker build copies `image_api/` (including the `frontend/` folder), the ONNX graph, external `.onnx.data` weights, and metadata. The container listens on port `8000` and exposes `/ready` for health checks.
+
+To validate a live inference with the provided test image, run from the repo root:
+
+```powershell
+curl.exe -X POST "https://bean-leaf-classification-api.onrender.com/predict" -F "file=@sample_leaf.png"
+```
+
+The deployed API returned `angular_leaf_spot` for this sample on 2026-11-25, matching local inference. Cold starts, low compute resources, and the network path make hosted latency different from localhost measurements.
+
+## 9. Operational limitations
+
+- A public Render Free deployment exists for demonstration; it may sleep while idle and is not a production-availability claim.
 - The API has file-type, byte-count, and pixel-count checks, but that alone does not make it suitable for exposure to untrusted public traffic. Add authentication, rate limits, monitoring, dependency vulnerability scanning, and appropriate resource limits before production use.
 - The ONNX Dockerfile uses a non-root user and a `/ready` health check. A successful Docker build and health check are not substitutes for security review.
 - This is a portfolio classifier evaluated on a small curated dataset, **not** a validated crop-disease diagnostic tool.
