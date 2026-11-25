@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="LeafLens AI — a thoughtful little bean-leaf classifier powered by a real MobileNetV3 and ONNX Runtime inference API." />
+  <meta name="theme-color" content="#f7f5ec" />
+  <title>LeafLens AI — A little love for your leaves</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="paper-texture" aria-hidden="true"></div>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="LeafLens AI home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none"><path d="M29.6 8C16.7 7.9 8.8 14 8.8 23.2c0 5.4 3.8 9.2 9.1 9.2C28.2 32.4 32 18.9 29.6 8Z" fill="#DCE9CC" stroke="#42674C" stroke-width="1.8"/><path d="M10 32.7c4.8-10.2 11.1-14 18.7-19.7" stroke="#42674C" stroke-width="1.8" stroke-linecap="round"/><path d="M18.5 21.6 14.9 17M23 17.5l-1.4-5" stroke="#42674C" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </span>
+        <span class="brand-name">leaflens<span class="brand-dot">.</span><small>AI</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#try-it">Try it out</a>
+        <a href="#about">About the model</a>
+        <a class="nav-outline" href="/docs" target="_blank" rel="noopener noreferrer">API docs <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <div class="eyebrow"><span class="eyebrow-bloom" aria-hidden="true">✳</span> A TINY PLANT HEALTH COMPANION</div>
+          <h1 id="hero-title">Every leaf has<br/>a <em>little story.</em></h1>
+          <p class="hero-text">A little curious about your bean plant? Upload a leaf photo and let our AI take a closer look. Thoughtful tech, with a touch of green. <span aria-hidden="true">♡</span></p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#try-it">Check a leaf <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#about">How it works <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="hero-proof"><span class="avatars" aria-hidden="true">✦</span><span>Real AI model <b>·</b> Three leaf categories <b>·</b> Made with care</span></div>
+        </div>
+        <div class="hero-art" role="img" aria-label="Illustration of a thriving leafy plant growing in a terracotta pot, surrounded by small stars and a floating leaf check card">
+          <div class="art-circle art-circle-one"></div>
+          <div class="art-circle art-circle-two"></div>
+          <svg class="plant-art" viewBox="0 0 510 445" aria-hidden="true">
+            <defs>
+              <linearGradient id="stem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#56795A"/><stop offset="1" stop-color="#375944"/></linearGradient>
+              <linearGradient id="leafOne" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#A4C38A"/><stop offset="1" stop-color="#6D9C75"/></linearGradient>
+              <linearGradient id="leafTwo" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D2DEA2"/><stop offset="1" stop-color="#93B382"/></linearGradient>
+              <linearGradient id="pot" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#DAB38B"/><stop offset="1" stop-color="#B9826B"/></linearGradient>
+            </defs>
+            <ellipse cx="260" cy="406" rx="122" ry="19" fill="#A3B49A" opacity=".23"/>
+            <g fill="none" stroke="url(#stem)" stroke-width="7" stroke-linecap="round"><path d="M252 337C254 254 248 183 262 78"/><path d="M252 309C212 242 177 204 115 170"/><path d="M252 287C287 233 332 190 384 165"/><path d="M251 257C208 185 189 145 154 113"/><path d="M258 224C296 164 324 132 349 106"/></g>
+            <path d="M266 104c-46-22-68-76-37-95 35-13 76 22 76 57 0 24-17 37-39 38Z" fill="url(#leafTwo)" stroke="#537953" stroke-width="3"/>
+            <path d="M266 102c-1-37 11-63 31-81" stroke="#64835B" stroke-width="2.6" fill="none"/>
+            <path d="M171 217C92 229 70 163 103 126c46-34 120 14 116 70-1 14-25 20-48 21Z" fill="url(#leafOne)" stroke="#4F7F58" stroke-width="3"/>
+            <path d="M202 206c-48-39-73-59-97-68" stroke="#5E8C63" stroke-width="2.6" fill="none"/>
+            <path d="M344 225c60 12 112-44 99-87-9-40-84-48-113-3-25 38-17 81 14 90Z" fill="url(#leafTwo)" stroke="#668F63" stroke-width="3"/>
+            <path d="M332 216c34-36 59-54 99-72" stroke="#76986A" stroke-width="2.6" fill="none"/>
+            <path d="M179 144c-52 7-76-24-68-68 7-34 53-53 78-19 26 34 24 79-10 87Z" fill="url(#leafTwo)" stroke="#638A5F" stroke-width="3"/>
+            <path d="M184 133c-7-35-18-53-40-72" stroke="#739467" stroke-width="2.6" fill="none"/>
+            <path d="M338 138c-31-31-6-87 39-93 49-3 70 36 47 71-20 31-57 37-86 22Z" fill="url(#leafOne)" stroke="#4F8059" stroke-width="3"/>
+            <path d="M344 133c29-32 47-47 73-60" stroke="#67926D" stroke-width="2.6" fill="none"/>
+            <path d="M223 312c-61-8-77-60-49-90 31-31 87-5 93 43 3 22-14 52-44 47Z" fill="url(#leafTwo)" stroke="#658C60" stroke-width="3"/>
+            <path d="M244 298c-19-29-40-51-62-66" stroke="#739565" stroke-width="2.3" fill="none"/>
+            <path d="M293 295c57 7 95-29 86-69-11-37-59-46-87-16-25 25-26 77 1 85Z" fill="url(#leafOne)" stroke="#57815B" stroke-width="3"/>
+            <path d="M286 284c25-29 51-49 82-58" stroke="#638F62" stroke-width="2.3" fill="none"/>
+            <path d="M192 328h138l-17 72c-4 11-23 17-52 17s-49-6-52-17l-17-72Z" fill="url(#pot)" stroke="#AA7967" stroke-width="3"/>
+            <rect x="182" y="310" width="158" height="31" rx="10" fill="#E6C1A0" stroke="#B78973" stroke-width="3"/>
+            <path d="M221 354c23 9 52 12 78 4" stroke="#EBCBB0" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+            <path d="M254 379c5-10 17-14 24-6 6 7 2 16-18 26-18-12-23-19-18-26 4-6 12-5 12 6Z" fill="#A87664" opacity=".77"/>
+          </svg>
+          <div class="art-note art-note-top"><span class="note-icon">✿</span><span>Made for curious<br/><strong>plant parents</strong></span></div>
+          <div class="art-note art-note-bottom"><span class="success-dot"></span><span>Leaf by leaf, we learn.</span></div>
+          <span class="sparkle sparkle-one" aria-hidden="true">✳</span>
+          <span class="sparkle sparkle-two" aria-hidden="true">✦</span>
+          <span class="sparkle sparkle-three" aria-hidden="true">✧</span>
+        </div>
+      </section>
+
+      <section class="workspace-section" id="try-it" aria-labelledby="workspace-title">
+        <div class="section-heading">
+          <div><div class="eyebrow eyebrow-small">LET'S TAKE A LOOK</div><h2 id="workspace-title">Meet your leaf’s <em>little checkup.</em></h2></div>
+          <div class="model-status" id="model-status"><span class="status-light" aria-hidden="true"></span><span id="model-status-text">Checking model…</span></div>
+        </div>
+        <div class="workspace-grid">
+          <div class="panel upload-panel">
+            <div class="panel-title-row"><span class="panel-kicker">01 / YOUR LEAF</span><span class="panel-sprout" aria-hidden="true">❀</span></div>
+            <h3>Let's see that leaf!</h3>
+            <p>Choose a clear photo of a single bean leaf. We'll take it from there.</p>
+            <form id="predict-form" novalidate>
+              <input id="leaf-file" class="visually-hidden" name="file" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="file-help" />
+              <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Select or drop a bean leaf image">
+                <div class="drop-empty" id="drop-empty">
+                  <div class="upload-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="7" y="10" width="34" height="29" rx="7" stroke="currentColor" stroke-width="1.8"/><path d="m14 31 8-8 7 6 5-5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="18" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M25 5v12m-5-5 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                  <strong>Drop your leaf photo here</strong>
+                  <span>or <span class="choose-label">browse your files</span></span>
+                </div>
+                <div class="drop-preview hidden" id="drop-preview">
+                  <img id="preview-image" alt="Preview of the selected bean leaf photo" />
+                  <div class="preview-bottom"><span id="selected-name"></span><span>Change image ↗</span></div>
+                </div>
+              </div>
+              <div class="file-help" id="file-help"><span>✳</span> JPG, PNG or WebP <span class="help-sep">·</span> Up to 5 MB</div>
+              <button class="analyze-button" id="analyze-button" type="submit" disabled><span id="button-label">Analyze my leaf</span><span id="button-icon" aria-hidden="true">↗</span></button>
+              <p class="form-feedback" id="form-feedback" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div class="panel result-panel" id="result-panel" aria-live="polite" aria-atomic="false">
+            <div class="panel-title-row"><span class="panel-kicker">02 / YOUR RESULTS</span><span class="result-star" aria-hidden="true">✧</span></div>
+            <div id="result-empty" class="result-empty">
+              <div class="empty-orbit" aria-hidden="true"><span>✿</span><i class="orbit-a">✧</i><i class="orbit-b">✳</i></div>
+              <h3>Something lovely<br/>is growing here.</h3>
+              <p>Upload a photo and your leaf's AI checkup will appear right here.</p>
+            </div>
+            <div class="result-content hidden" id="result-content">
+              <div class="result-topline"><span class="result-chip" id="result-chip">RESULT READY</span><span class="result-heart" aria-hidden="true">♡</span></div>
+              <div class="result-illustration" id="result-illustration" aria-hidden="true">🌿</div>
+              <div class="result-title" id="result-title"></div>
+              <p class="result-detail" id="result-detail"></p>
+              <div class="confidence-title"><strong>Model scores</strong><span>Across three categories</span></div>
+              <div class="confidence-list" id="confidence-list"></div>
+              <p class="result-footnote">These are model scores, not calibrated probabilities or a professional plant diagnosis.</p>
+              <button class="secondary-button" id="try-again" type="button">Check another leaf <span aria-hidden="true">↗</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-section" id="about" aria-labelledby="about-title">
+        <div class="about-heading"><div class="eyebrow eyebrow-small">A PEEK BEHIND THE PETALS</div><h2 id="about-title">Small app. <em>Real AI.</em></h2><p>Built as an AI engineering project, with care for both model quality and the experience of using it.</p></div>
+        <div class="about-grid">
+          <article class="about-card"><div class="about-icon">↗</div><h3>Trained with purpose</h3><p>MobileNetV3-Small, trained on the Makerere Beans dataset, classifies three leaf categories.</p></article>
+          <article class="about-card"><div class="about-icon">✳</div><h3>Faster by design</h3><p>ONNX Runtime helped reduce measured CPU inference time compared with PyTorch in local tests.</p></article>
+          <article class="about-card"><div class="about-icon">♡</div><h3>Built to be shared</h3><p>FastAPI, Docker, automated tests, and a cloud deployment make this more than a notebook.</p></article>
+        </div>
+        <div class="model-mini">On a curated 128-image test set: <strong>87.5% accuracy</strong> and <strong>87.66% macro-F1</strong>. Performance on real-world photos may differ.</div>
+      </section>
+    </main>
+    <footer class="site-footer"><span class="footer-brand">leaflens<span>.</span> <span>AI</span></span><span>Made with curiosity, code & a little sunshine. ☀</span><div><a href="/docs" target="_blank" rel="noopener noreferrer">API docs ↗</a><a href="https://github.com/janaehab/bean-leaf-classification-api" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></footer>
+  </div>
+</body>
+</html>

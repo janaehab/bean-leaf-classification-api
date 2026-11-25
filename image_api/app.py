@@ -8,7 +8,8 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 from starlette.concurrency import run_in_threadpool
 
@@ -45,7 +46,17 @@ def create_app(model_path: str | None = None, predictor=None, backend: str | Non
                 app.state.load_error = type(exc).__name__
         yield
 
-    app = FastAPI(title="Bean Leaf Image Classification API", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="LeafLens AI | Bean Leaf Classification API", version="0.3.0", lifespan=lifespan)
+
+    # Static frontend shares this FastAPI origin with /predict, so no separate
+    # frontend hosting or CORS configuration is needed.
+    frontend_dir = Path(__file__).resolve().parent / "frontend"
+    if frontend_dir.is_dir():
+        app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
+
+        @app.get("/", include_in_schema=False)
+        def homepage():
+            return FileResponse(frontend_dir / "index.html", media_type="text/html")
 
     @app.get("/health")
     def health():
