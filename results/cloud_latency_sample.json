@@ -1,0 +1,24 @@
+{
+  "timestamp_utc": "2026-11-25T20:18:02.498969+00:00",
+  "url": "https://bean-leaf-classification-api.onrender.com",
+  "image": "sample_leaf.png",
+  "image_bytes": 558340,
+  "warmup_requests": 2,
+  "measured_requests": 10,
+  "concurrency": 1,
+  "successful_requests": 10,
+  "failed_requests": 0,
+  "status_counts": {
+    "200": 10
+  },
+  "total_wall_seconds": 14.835,
+  "throughput_requests_per_second": 0.674,
+  "latency_ms_successful_requests": {
+    "mean": 1483.352,
+    "p50": 1485.072,
+    "p95": 1606.017,
+    "p99": 1648.852
+  },
+  "sample_errors": [],
+  "scope": "single-client end-to-end HTTP benchmark; image upload, decoding, preprocessing, inference, and response"
+}

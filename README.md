@@ -240,15 +240,37 @@ A successful deployed prediction verifies hosted inference; it does not establis
 
 **Continuous integration:** GitHub Actions is configured to check Python syntax, install testing/ONNX dependencies, run tests, and build/start the ONNX Docker image with a readiness check. Check the [Actions tab](https://github.com/janaehab/bean-leaf-classification-api/actions) for the latest workflow result.
 
-### Optional: a small cloud latency check
+### Cloud Deployment Benchmark — Render Free
 
-Run the existing benchmark script from your **own computer**, after checking that the Render Free instance is awake. Use a few requests rather than the 7,500-request local load-test workload:
+The deployed LeafLens AI API was benchmarked on Render's
+Free instance using 2 warm-up requests and 10 measured
+prediction requests.
+
+| Metric | Result |
+|---|---:|
+| Successful requests | 10/10 |
+| Failed requests | 0 |
+| Mean latency | 1,483.35 ms |
+| Median latency (p50) | 1,485.07 ms |
+| p95 latency | 1,606.02 ms |
+| Throughput | 0.674 requests/second |
+| Concurrency | 1 |
+| Image size | 558 KB |
+
+The benchmark measured client-observed end-to-end HTTP
+latency, including network communication, image upload,
+preprocessing, model inference, and response delivery.
+
+**Limitations:** This is a small, warmed-up sample measured
+from a single client on Render's Free instance. The results
+are not directly comparable to local model-only inference
+benchmarks and do not represent production-scale performance.
+
+**Reproduce the benchmark:**
 
 ```powershell
 python concurrent_http_benchmark.py --url https://bean-leaf-classification-api.onrender.com --image sample_leaf.png --concurrency 1 --runs 10 --warmup 2 --timeout 120 --output results/cloud_latency_sample.json
 ```
-
-This reports **client-observed end-to-end HTTP latency**, including network overhead, upload, preprocessing, inference, and response serialization. It is **not comparable directly** with the local model-only CPU speedup. Do not claim a measured cloud number until this experiment has actually been run.
 
 ### Operational boundaries
 
