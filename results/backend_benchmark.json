@@ -1,0 +1,25 @@
+{
+  "checkpoint": "artifacts/beans_frozen_seed21.pt",
+  "model_version": "beans-mnv3-seed21",
+  "onnx": "artifacts/beans_frozen_seed21.onnx",
+  "image": "sample_leaf.png",
+  "threads_per_backend": 2,
+  "warmup": 20,
+  "runs": 150,
+  "scope": "CPU model-only inference; preprocessing and HTTP excluded",
+  "pytorch_predicted_class": "angular_leaf_spot",
+  "onnx_predicted_class": "angular_leaf_spot",
+  "same_predicted_class": true,
+  "max_absolute_logit_difference": 3.5762786865234375e-06,
+  "logits_close_at_1e_minus_3": true,
+  "pytorch": {
+    "mean_ms": 24.846,
+    "p50_ms": 23.273,
+    "p95_ms": 31.667
+  },
+  "onnxruntime": {
+    "mean_ms": 4.772,
+    "p50_ms": 4.709,
+    "p95_ms": 5.424
+  }
+}

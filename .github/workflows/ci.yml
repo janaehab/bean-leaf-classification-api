@@ -1,0 +1,75 @@
+name: Test and build ONNX API
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements-api.txt
+            requirements-training.txt
+            requirements-onnx-api.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-training.txt -r requirements-onnx-api.txt
+
+      - name: Check Python syntax
+        run: python -m compileall -q image_api scripts tests
+
+      - name: Require deployable ONNX artifacts
+        run: |
+          test -s artifacts/beans_frozen_seed21.onnx
+          test -s artifacts/beans_frozen_seed21.onnx.data
+          test -s artifacts/beans_frozen_seed21.onnx.metadata.json
+
+      - name: Run API tests including real ONNX checkpoint
+        run: python -m pytest -q -ra
+
+  docker:
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build ONNX inference image
+        run: docker build -f Dockerfile.onnx -t bean-leaf-onnx:ci .
+
+      - name: Start container and check readiness
+        run: |
+          docker run -d --name bean-leaf-onnx-ci -p 127.0.0.1:8002:8000 bean-leaf-onnx:ci
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8002/ready > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs bean-leaf-onnx-ci
+          exit 1
+
+      - name: Verify ONNX model info
+        run: |
+          curl --fail --silent --show-error http://127.0.0.1:8002/model-info | \
+            python -c 'import json, sys; d=json.load(sys.stdin); assert d["loaded"] and d["backend"] == "onnx" and d["version"] == "beans-mnv3-seed21", d'
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f bean-leaf-onnx-ci || true

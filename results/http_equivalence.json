@@ -1,0 +1,10 @@
+{
+  "dataset": "AI-Lab-Makerere/beans",
+  "split": "validation",
+  "num_examples": 133,
+  "same_top1_count": 133,
+  "same_top1_fraction": 1.0,
+  "max_absolute_probability_difference": 3e-06,
+  "differences": [],
+  "note": "End-to-end HTTP equivalence including decoding/preprocessing, not a latency benchmark"
+}

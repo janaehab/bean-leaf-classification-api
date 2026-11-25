@@ -1,0 +1,39 @@
+# Python environment and cache
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+
+# Local secrets and backup files
+.env
+.env.*
+!.env.example
+*.bak
+
+# Large PyTorch checkpoints
+artifacts/*.pt
+
+# Ignore intermediate experiment outputs
+results/*.json
+results/*.csv
+
+# Preserve selected experiment evidence
+!results/test_metrics_baseline.json
+!results/test_metrics_frozen_seed21.json
+!results/confusion_matrix_frozen_seed21.csv
+!results/backend_benchmark.json
+!results/onnx_validation.json
+!results/http_equivalence.json
+!results/docker_load_c1.json
+!results/docker_load_c5.json
+!results/docker_load_c10.json
+
+# Preserve training experiments
+!results/train_history_baseline.json
+!results/train_history_frozen8.json
+!results/train_history_finetuned.json
+!results/train_history_frozen_seed7.json
+!results/train_history_frozen_seed21.json
+!results/train_history_finetuned_seed7.json
+!results/train_history_finetuned_seed21.json

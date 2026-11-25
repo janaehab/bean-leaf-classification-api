@@ -1,0 +1,60 @@
+{
+  "dataset": "AI-Lab-Makerere/beans",
+  "split": "test",
+  "num_examples": 128,
+  "model_version": "beans-mnv3-seed42",
+  "accuracy": 0.8515625,
+  "macro_f1": 0.8534732942266131,
+  "majority_class_baseline_accuracy": 0.3359375,
+  "majority_class_baseline_macro_f1": 0.16764132553606237,
+  "classification_report": {
+    "angular_leaf_spot": {
+      "precision": 0.8611111111111112,
+      "recall": 0.7209302325581395,
+      "f1-score": 0.7848101265822784,
+      "support": 43.0
+    },
+    "bean_rust": {
+      "precision": 0.7307692307692307,
+      "recall": 0.8837209302325582,
+      "f1-score": 0.8,
+      "support": 43.0
+    },
+    "healthy": {
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "f1-score": 0.975609756097561,
+      "support": 42.0
+    },
+    "accuracy": 0.8515625,
+    "macro avg": {
+      "precision": 0.863960113960114,
+      "recall": 0.85234403839055,
+      "f1-score": 0.8534732942266131,
+      "support": 128.0
+    },
+    "weighted avg": {
+      "precision": 0.8628973023504274,
+      "recall": 0.8515625,
+      "f1-score": 0.8525191031182464,
+      "support": 128.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      31,
+      12,
+      0
+    ],
+    [
+      5,
+      38,
+      0
+    ],
+    [
+      0,
+      2,
+      40
+    ]
+  ]
+}

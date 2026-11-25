@@ -1,0 +1,17 @@
+{
+  "checkpoint": "artifacts/beans_frozen_seed21.pt",
+  "onnx": "artifacts/beans_frozen_seed21.onnx",
+  "model_version": "beans-mnv3-seed21",
+  "dataset": "AI-Lab-Makerere/beans",
+  "split": "validation",
+  "num_examples": 133,
+  "same_top1_count": 133,
+  "same_top1_fraction": 1.0,
+  "logits_close_count_at_rtol_1e-3_atol_1e-3": 133,
+  "max_absolute_logit_difference": 1.1682510375976562e-05,
+  "pytorch_accuracy": 0.9323308270676691,
+  "onnx_accuracy": 0.9323308270676691,
+  "pytorch_macro_f1": 0.9324478178368122,
+  "onnx_macro_f1": 0.9324478178368122,
+  "differences": []
+}

@@ -1,0 +1,17 @@
+FROM python:3.12-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    MODEL_BACKEND=onnx \
+    ONNX_MODEL_PATH=/app/artifacts/beans_frozen_seed21.onnx \
+    ONNX_THREADS=2
+COPY requirements-onnx-api.txt .
+RUN pip install --no-cache-dir -r requirements-onnx-api.txt \
+    && useradd -r -u 10001 appuser
+COPY image_api/ image_api/
+RUN mkdir -p artifacts
+COPY artifacts/beans_frozen_seed21.onnx artifacts/beans_frozen_seed21.onnx.data artifacts/beans_frozen_seed21.onnx.metadata.json /app/artifacts/
+USER 10001
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2)" || exit 1
+CMD ["uvicorn", "image_api.app:app", "--host", "0.0.0.0", "--port", "8000"]

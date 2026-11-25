@@ -1,0 +1,24 @@
+{
+  "timestamp_utc": "2026-11-25T15:40:57.185988+00:00",
+  "url": "http://127.0.0.1:8002",
+  "image": "sample_leaf.png",
+  "image_bytes": 558340,
+  "warmup_requests": 10,
+  "measured_requests": 3000,
+  "concurrency": 5,
+  "successful_requests": 3000,
+  "failed_requests": 0,
+  "status_counts": {
+    "200": 3000
+  },
+  "total_wall_seconds": 50.98,
+  "throughput_requests_per_second": 58.847,
+  "latency_ms_successful_requests": {
+    "mean": 84.007,
+    "p50": 78.372,
+    "p95": 119.706,
+    "p99": 131.424
+  },
+  "sample_errors": [],
+  "scope": "single-client end-to-end HTTP benchmark; image upload, decoding, preprocessing, inference, and response"
+}
